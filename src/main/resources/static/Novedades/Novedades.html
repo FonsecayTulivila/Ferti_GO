@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go | Novedades</title>
+  <link rel="stylesheet" href="novedades.css">
+  <script defer src="novedades.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../novedades/novedades.html" class="active">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header>
+      <h1>Gestión de Novedades</h1>
+      <p>Visualiza y administra las novedades enviadas por los capataces o administradores de finca.</p>
+    </header>
+
+    <!-- Tarjetas resumen -->
+    <section class="cards">
+      <div class="card">
+        <h3>Total Novedades</h3>
+        <p class="value" id="totalNovedades">0</p>
+      </div>
+    </section>
+
+    <!-- Tabla -->
+    <section class="tabla-container">
+      <h2>Lista de Novedades</h2>
+
+      <!-- FILTRO DE FECHAS -->
+      <div class="filtros-container">
+        <div class="filtro-fechas">
+          <div class="fecha-grupo">
+            <label for="fechaDesde">Desde:</label>
+            <input type="date" id="fechaDesde">
+          </div>
+          <div class="fecha-grupo">
+            <label for="fechaHasta">Hasta:</label>
+            <input type="date" id="fechaHasta">
+          </div>
+          <button id="btnLimpiarFiltros" class="btn-limpiar">Limpiar</button>
+        </div>
+        
+        <span id="resultadosFiltros" class="resultados-texto"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Finca</th>
+            <th>Correo</th>
+            <th>Mensaje</th>
+            <th>Fecha Envío</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaNovedades"></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

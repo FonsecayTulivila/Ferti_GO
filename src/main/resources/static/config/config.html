@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - Fertigo</title>
+  <link rel="stylesheet" href="configuracion.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo"><h2>🌱 Ferti-Go</h2></div>
+    <nav class="menu">
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html" class="active">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <h1>⚙️ Configuración del Sistema</h1>
+      <div class="user-info">
+        <span id="nombreUsuario">Admin</span>
+        <button onclick="cerrarSesion()">Salir</button>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="config-intro">
+      <h2>Configuración General</h2>
+      <p class="config-description">
+        Personaliza la información principal de tu plataforma Fertigo.
+      </p>
+    </div>
+
+    <!-- Cards de configuración -->
+    <div class="config-cards">
+      <!-- Card 1: Nombre Empresa -->
+      <div class="config-card">
+        <div class="config-card-icon">🏢</div>
+        <h3>Nombre de la Empresa</h3>
+        <p>Actualiza el nombre que se muestra en toda la plataforma</p>
+        <button class="btn-config" onclick="openModal('empresaModal')">
+          Cambiar Nombre
+        </button>
+      </div>
+
+      <!-- Card 2: Idioma -->
+      <div class="config-card">
+        <div class="config-card-icon">🌍</div>
+        <h3>Idioma del Sistema</h3>
+        <p>Selecciona el idioma de la interfaz</p>
+        <button class="btn-config" onclick="openModal('idiomaModal')">
+          Cambiar Idioma
+        </button>
+      </div>
+
+      <!-- Card 3: Contraseña -->
+      <div class="config-card">
+        <div class="config-card-icon">🔒</div>
+        <h3>Contraseña de Admin</h3>
+        <p>Actualiza tu contraseña de acceso</p>
+        <button class="btn-config" onclick="openModal('contrasenaModal')">
+          Cambiar Contraseña
+        </button>
+      </div>
+    </div>
+
+    <!-- Información actual -->
+    <div class="config-info">
+      <h3>📋 Configuración Actual</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Empresa:</strong>
+          <span id="empresaActual">Cargando...</span>
+        </div>
+        <div class="info-item">
+          <strong>Idioma:</strong>
+          <span id="idiomaActual">Cargando...</span>
+        </div>
+        <div class="info-item">
+          <strong>Última actualización:</strong>
+          <span id="ultimaActualizacion">Cargando...</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: Cambiar Nombre Empresa -->
+  <div id="empresaModal" class="modal">
+    <div class="modal-content">
+      <span class="cerrar" onclick="closeModal('empresaModal')">&times;</span>
+      <h2>🏢 Cambiar Nombre de la Empresa</h2>
+      <form onsubmit="event.preventDefault(); guardarEmpresa();">
+        <div class="form-group full-width">
+          <label for="empresaInput">Nuevo nombre de la empresa:</label>
+          <input type="text" id="empresaInput" placeholder="Ej: Fertigo S.A.S." required>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-agregar">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Cambiar Idioma -->
+  <div id="idiomaModal" class="modal">
+    <div class="modal-content">
+      <span class="cerrar" onclick="closeModal('idiomaModal')">&times;</span>
+      <h2>🌍 Cambiar Idioma del Sistema</h2>
+      <form onsubmit="event.preventDefault(); guardarIdioma();">
+        <div class="form-group full-width">
+          <label for="idiomaSelect">Seleccionar idioma:</label>
+          <select id="idiomaSelect" required>
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+          </select>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-agregar">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Cambiar Contraseña -->
+  <div id="contrasenaModal" class="modal">
+    <div class="modal-content">
+      <span class="cerrar" onclick="closeModal('contrasenaModal')">&times;</span>
+      <h2>🔒 Cambiar Contraseña</h2>
+      <form onsubmit="event.preventDefault(); guardarContrasena();">
+        <div class="form-group full-width">
+          <label for="oldPassword">Contraseña actual:</label>
+          <input type="password" id="oldPassword" placeholder="Ingresa tu contraseña actual" required>
+        </div>
+        <div class="form-group full-width">
+          <label for="newPassword">Nueva contraseña:</label>
+          <input type="password" id="newPassword" placeholder="Ingresa la nueva contraseña" required minlength="6">
+        </div>
+        <div class="form-group full-width">
+          <label for="confirmPassword">Confirmar nueva contraseña:</label>
+          <input type="password" id="confirmPassword" placeholder="Confirma la nueva contraseña" required minlength="6">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-agregar">Cambiar Contraseña</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mensaje flotante -->
+  <div id="mensaje" class="mensaje-flotante"></div>
+
+  <script src="configuracion.js"></script>
+  <script src="../i18n.js"></script>
+  <script defer src="configuracion.js"></script>
+</body>
+</html>

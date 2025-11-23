@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go | Fertilizantes</title>
+  <link rel="stylesheet" href="fertilizantes.css">
+  <script defer src="fertilizantes.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html" class="active">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header>
+      <h1>Gestión de Fertilizantes</h1>
+      <p>Administra los fertilizantes registrados en el sistema.</p>
+    </header>
+
+    <!-- Tarjetas -->
+    <section class="cards">
+      <div class="card">
+        <h3>Total Fertilizantes</h3>
+        <p class="value" id="totalFertilizantes">0</p>
+      </div>
+    </section>
+
+    <!-- Tabla -->
+    <section class="tabla-container">
+      <div class="tabla-header">
+        <h2>Lista de Fertilizantes</h2>
+        <button id="btnNuevoFertilizante" class="btn-agregar">➕ Agregar Fertilizante</button>
+      </div>
+
+      <!-- BUSCADOR -->
+      <div class="filtros-container">
+        <div class="filtro-busqueda">
+          <input 
+            type="text" 
+            id="buscadorFertilizantes" 
+            placeholder="🔍 Buscar por nombre "
+            autocomplete="off"
+          >
+        </div>
+        
+        <span id="resultadosFiltros" class="resultados-texto"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Unidad</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaFertilizantes"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalFertilizante" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="cerrarModal" class="cerrar">&times;</span>
+      <h2 id="modalTitulo">Agregar Fertilizante</h2>
+      
+      <form id="formFertilizante" class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" required>
+        </div>
+
+        <div class="form-group">
+          <label for="tipo">Tipo:</label>
+          <input type="text" id="tipo" required>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" required>
+        </div>
+
+        <div class="form-group">
+          <label for="unidad">Unidad:</label>
+          <select id="unidad" required>
+            <option value="kg">kg</option>
+            <option value="litros">litros</option>
+            <option value="g">g</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="descripcion">Descripción:</label>
+          <textarea id="descripcion"></textarea>
+        </div>
+
+        <div class="modal-buttons full-width">
+          <button type="submit" class="btn-agregar">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="../i18n.js"></script>
+</body>
+</html>

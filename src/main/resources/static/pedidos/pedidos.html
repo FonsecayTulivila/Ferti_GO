@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go | Pedidos</title>
+  <link rel="stylesheet" href="pedidos.css">
+  <script defer src="pedidos.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html" class="active">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header>
+      <h1>Gestión de Pedidos</h1>
+      <p>Revisa y administra las solicitudes de fertilizantes realizadas por los capataces.</p>
+    </header>
+
+    <!-- Tarjetas resumen -->
+    <section class="cards">
+      <div class="card">
+        <h3>Total Pedidos</h3>
+        <p class="value" id="totalPedidos">0</p>
+      </div>
+      <div class="card">
+        <h3>Pendientes</h3>
+        <p class="value" id="pendientes">0</p>
+      </div>
+      <div class="card">
+        <h3>Aprobados</h3>
+        <p class="value" id="aprobados">0</p>
+      </div>
+      <div class="card">
+        <h3>Rechazados</h3>
+        <p class="value" id="rechazados">0</p>
+      </div>
+    </section>
+
+    <!-- Tabla -->
+    <section class="tabla-container">
+      <h2>Lista de Pedidos</h2>
+
+      <!-- FILTROS DE BÚSQUEDA -->
+      <div class="filtros-container">
+        <div class="filtro-busqueda">
+          <input 
+            type="text" 
+            id="buscadorPedidos" 
+            placeholder="🔍 Buscar por finca, ubicación o fertilizante..."
+            autocomplete="off"
+          >
+        </div>
+        
+        <div class="filtro-estado">
+          <label for="filtroEstado">Estado:</label>
+          <select id="filtroEstado">
+            <option value="TODOS">Todos</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="APROBADA">Aprobado</option>
+            <option value="RECHAZADA">Rechazado</option>
+          </select>
+        </div>
+
+        <div class="filtro-fechas">
+          <div class="fecha-grupo">
+            <label for="fechaDesde">Fecha de prioridad de pedidos desde:</label>
+            <input type="date" id="fechaDesde">
+          </div>
+          <div class="fecha-grupo">
+            <label for="fechaHasta">Fecha de prioridad de pedidos hasta:</label>
+            <input type="date" id="fechaHasta">
+          </div>
+          <button id="btnLimpiarFiltros" class="btn-limpiar">Limpiar</button>
+        </div>
+        
+        <span id="resultadosFiltros" class="resultados-texto"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Finca</th>
+            <th>Ubicación</th>
+            <th>Fertilizante</th>
+            <th>Cantidad</th>
+            <th>Fecha requerida</th>
+            <th>Motivo</th>
+            <th>Notas</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaPedidos"></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

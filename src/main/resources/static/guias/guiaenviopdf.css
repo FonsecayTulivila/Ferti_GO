@@ -1,0 +1,39 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+h1 {
+  text-align: center;
+  color: #2e7d32;
+}
+
+p {
+  margin: 6px 0;
+}
+
+.bloque {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.firma {
+  margin-top: 40px;
+}
+
+.firma p {
+  margin: 4px 0;
+}
+
+.precio {
+  font-size: 18px;
+  color: #1a237e;
+  margin-top: 10px;
+}
+
+.nota {
+  font-weight: bold;
+  color: black;
+  font-style: normal;
+}

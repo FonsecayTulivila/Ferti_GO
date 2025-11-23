@@ -1,0 +1,95 @@
+/* Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+body.login-page {
+  background: none !important;
+}
+
+body.login-page {
+  background-image: url("./campo.jpg") !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+}
+
+body.login-page::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(46, 125, 50, 0.3);
+  z-index: 0;
+}
+
+/* Header */
+header {
+  width: 100%;
+  background: rgba(255,255,255,0.95);
+  position: relative;
+  z-index: 2;
+}
+
+/* Centrar login */
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  width: 350px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Inputs */
+#loginForm input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+/* Botón */
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #ff6b35;
+  border: none;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #e65a2d;
+}

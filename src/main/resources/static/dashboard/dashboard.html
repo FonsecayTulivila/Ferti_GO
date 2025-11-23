@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go | Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="dashboard.html" class="active">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+
+    <a href="../login/Login.html" class="logout">Cerrar Sesión</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <header>
+        <h1>Dashboard</h1>
+        <p>Resumen general del sistema</p> 
+    </header>
+
+    <!-- CARDS -->
+    <section class="cards">
+      <div class="card">
+        <h3>Usuarios Activos</h3>
+        <p class="value" id="usuariosActivos">0</p>
+      </div>
+      <div class="card">
+        <h3>Fertilizantes Registrados</h3>
+        <p class="value" id="fertilizantes">0</p>
+      </div>
+      <div class="card">
+        <h3>Solicitudes Pendientes</h3>
+        <p class="value" id="solicitudesPendientes">0</p>
+      </div>
+      <div class="card">
+        <h3>Entregas este Mes</h3>
+        <p class="value" id="entregas">0</p>
+      </div>
+    </section>
+
+    <!-- CHARTS -->
+    <section class="charts">
+      <div class="chart-container">
+        <h2>Estado de las Solicitudes</h2>
+        <canvas id="pieChart"></canvas>
+      </div>
+      
+      <div class="chart-container">
+        <h2>Datos Generales del Sistema</h2>
+        <canvas id="barChart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

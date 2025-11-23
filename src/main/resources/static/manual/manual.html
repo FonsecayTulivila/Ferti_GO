@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go | Manual</title>
+  <link rel="stylesheet" href="../manual/manual.css">
+  <script defer src="../manual/manual.js"></script>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html" class="active">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header>
+      <h1>Manual del Sistema</h1>
+      <p>Aprende a usar cada módulo del sistema Ferti-Go paso a paso.</p>
+    </header>
+
+    <section class="video-grid">
+
+      <!-- VIDEO 1 -->
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/1BWWsomsmnw')">
+        <img src="https://img.youtube.com/vi/1BWWsomsmnw/maxresdefault.jpg" alt="Miniatura">
+        <h3>Login y Dashboard</h3>
+        <p>Aprende a iniciar sesión y entender el panel principal.</p>
+      </div>
+      <!-- VIDEO 2 -->
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/mki7e0QB0cA')">
+        <img src="https://img.youtube.com/vi/mki7e0QB0cA/maxresdefault.jpg">
+        <h3>Gestión de Usuarios</h3>
+        <p>Cómo crear, editar y eliminar usuarios.</p>
+      </div>
+
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/DakFiekMYdY')">
+      <img src="https://img.youtube.com/vi/DakFiekMYdY/maxresdefault.jpg" alt="Miniatura">
+      <h3>Gestión de Fertilizantes</h3>
+      <p>Administra el inventario de fertilizantes.</p>
+      </div>
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/IWKe1-dwr7k')">
+        <img src="https://img.youtube.com/vi/IWKe1-dwr7k/maxresdefault.jpg" alt="Miniatura">
+        <h3>Gestión de Pedidos</h3>
+        <p>Revisa y administra las solicitudes de fertilizantes.</p>
+      </div>
+      <!-- VIDEO 5 -->
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/5jMlwXR4T-s')">
+        <img src="https://img.youtube.com/vi/5jMlwXR4T-s/maxresdefault.jpg" alt="Miniatura">
+        <h3>Generar Guías de Aplicación</h3>
+        <p>Crea guías personalizadas para la aplicación de fertilizantes.</p>
+      </div>
+      <!-- VIDEO 6 -->
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/feS7zPTXPYk')">
+        <img src="https://img.youtube.com/vi/feS7zPTXPYk/maxresdefault.jpg" alt="Miniatura">
+        <h3>Gestión de Novedades</h3>
+        <p>Publica y administra noticias relevantes para los usuarios.</p>
+      </div>
+      <!-- VIDEO 7 -->
+      <div class="video-card" onclick="abrirVideo('https://www.youtube.com/embed/MrIpDOEKQZg')">
+        <img src="https://img.youtube.com/vi/MrIpDOEKQZg/maxresdefault.jpg" alt="Miniatura">
+        <h3>Configuraciones del Sistema</h3>
+        <p>Personaliza las opciones y preferencias del sistema.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <span class="cerrar" onclick="cerrarVideo()">&times;</span>
+      <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+</body>
+</html>

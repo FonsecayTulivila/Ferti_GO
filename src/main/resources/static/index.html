@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferti-Go - Software de Gestión Agrícola</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav class="container"> 
+      <div class="logo">Ferti-Go</div>
+      <ul class="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#servicios">Sobre el Software</a></li>
+        <li><a href="#como-funciona">Funcionalidades</a></li>
+        <li><a href="#contacto">Solicitar Fertilizante</a></li>
+      </ul>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <a href="login/Login.html" class="btn-login">Iniciar Sesión</a>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- HERO -->
+    <section id="inicio" class="hero carousel-bg">
+      <div class="container">
+        <h1>Ferti-Go</h1>
+        <p>Un software innovador para gestionar solicitudes y control de fertilizantes en el sector agrícola.</p>
+        <div class="hero-buttons">
+          <a href="#contacto" class="btn">Solicitar Fertilizante</a>
+          <a href="#como-funciona" class="btn btn-secondary">¿Cómo funciona?</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNCIONALIDADES -->
+    <section id="servicios" class="section">
+      <div class="container">
+        <h2>¿Por Qué Elegir Ferti-Go?</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="card-icon">📊</div>
+            <h3>Gestión Eficiente</h3>
+            <p>Centraliza y organiza solicitudes de fertilizantes desde un solo lugar.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">👨‍🌾</div>
+            <h3>Roles Claros</h3>
+            <p>Capataz solicita, Administrador gestiona y aprueba: un flujo simple y ordenado.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔔</div>
+            <h3>Notificaciones</h3>
+            <p>Recibe alertas sobre el estado de cada solicitud en tiempo real.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📱</div>
+            <h3>Acceso Multiplataforma</h3>
+            <p>Disponible para web y móvil, con soporte para trabajo offline.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESO -->
+    <section id="como-funciona" class="section">
+      <div class="container">
+        <h2>¿Cómo Funciona?</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Registro de Usuario</h3>
+            <p>Admins y Capataces se registran con sus credenciales.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Solicitud de Fertilizante</h3>
+            <p>El capataz completa un formulario con detalles de su necesidad.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Aprobación</h3>
+            <p>El administrador revisa la solicitud y cambia el estado.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Seguimiento</h3>
+            <p>Ambos roles pueden monitorear en tiempo real el proceso.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   <!-- FORMULARIO DE CONTACTO -->
+<section id="contacto" class="section">
+  <div class="container">
+    <h2>Solicita una Demostración de Ferti-Go</h2>
+    <p>Déjanos tus datos y nos pondremos en contacto contigo para mostrarte cómo Ferti-Go puede ayudarte a gestionar tu finca de manera más eficiente.</p>
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre Completo</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" name="email" placeholder="Ej. juanperez@mail.com" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" placeholder="Ej. +57 300 123 4567" required>
+        </div>
+        <div class="form-group">
+          <label for="empresa">Nombre de la Finca / Empresa</label>
+          <input type="text" id="empresa" name="empresa" placeholder="Ej. AgroFinca San Juan">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tamanoFinca">Tamaño de la Finca (hectáreas)</label>
+          <input type="number" id="tamanoFinca" name="tamanoFinca" placeholder="Ej. 50">
+        </div>
+        <div class="form-group">
+          <label for="ubicacion">Ubicación</label>
+          <input type="text" id="ubicacion" name="ubicacion" placeholder="Ciudad, Vereda, Departamento">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="mensaje">¿Qué esperas de Ferti-Go?</label>
+        <textarea id="mensaje" name="mensaje" rows="4" placeholder="Cuéntanos tus necesidades: control de cultivos, fertilización, seguimiento de trabajadores, etc."></textarea>
+      </div>
+      
+      <button type="submit" class="btn">Solicitar Demostración</button>
+    </form>
+  </div>
+</section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Ferti-Go</h3>
+          <p>Software de gestión agrícola para control y solicitud de fertilizantes.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Funcionalidades</h3>
+          <ul>
+            <li>Registro de usuarios</li>
+            <li>Gestión de solicitudes</li>
+            <li>Control de inventario</li>
+            <li>Monitoreo en tiempo real</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contacto</h3>
+          <p>📧 Email: fertigosolution@gmail.com</p>
+          <p>🌍 Disponible en versión Web y App</p>
+        </div>
+      </div>
+    <hr class="custom-hr">
+      <p>&copy; 2025 Ferti-Go Software. Bratt Diaz - Lorayne Rivera - Diego Tulivila - Angel Fonseca - SENA.</p>
+    </div>
+  </footer>
+<script src="script.js"></script>
+</body>
+</html>

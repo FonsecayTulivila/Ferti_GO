@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FertiGo | Usuarios</title>
+  <link rel="stylesheet" href="usuarios.css">
+  <script defer src="usuarios.js"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="logo">🌱 Ferti-Go</h2>
+    <nav>
+      <a href="../dashboard/dashboard.html">📊 Dashboard</a>
+      <a href="../usuarios/usuarios.html" class="active">👤 Usuarios</a>
+      <a href="../fertilizantes/fertilizantes.html">🧪 Fertilizantes</a>
+      <a href="../pedidos/pedidos.html">📦 Pedidos</a>
+      <a href="../guias/guias.html">📑 Generar Guía</a>
+      <a href="../Novedades/Novedades.html">📰 Novedades</a>
+      <a href="../config/config.html">⚙ Configuraciones</a>
+      <a href="../manual/manual.html">📘 Manual</a>
+    </nav>
+    <button class="logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header>
+      <h1>Gestión de Usuarios</h1>
+      <p>Administra los capataces registrados en el sistema.</p>
+    </header>
+
+    <!-- Tarjetas resumen -->
+    <section class="cards">
+      <div class="card">
+        <h3>Usuarios Totales</h3>
+        <p class="value" id="totalUsuarios">0</p>
+      </div>
+      <div class="card">
+        <h3>Capataces</h3>
+        <p class="value" id="totalCapataces">0</p>
+      </div>
+    </section>
+
+    <!-- Tabla de usuarios -->
+    <section class="tabla-container">
+      <div class="tabla-header">
+        <h2>Lista de Capataces</h2>
+        <button id="btnNuevoUsuario" class="btn-agregar">➕ Agregar Capataz</button>
+      </div>
+
+      <!-- BUSCADOR -->
+      <div class="buscador-container">
+        <input 
+          type="text" 
+          id="buscadorUsuarios" 
+          placeholder="🔍 Buscar por nombre, email, finca o ubicación..."
+          autocomplete="off"
+        >
+        <span id="resultadosBusqueda" class="resultados-texto"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Finca</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaUsuarios"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalUsuario" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="cerrarModal" class="cerrar">&times;</span>
+      <h2 id="modalTitulo">Agregar Capataz</h2>
+      <form id="formUsuario">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" id="contraseña" required>
+
+        <label for="fincaNombre">Nombre Finca:</label>
+        <input type="text" id="fincaNombre" required>
+
+        <label for="fincaUbicacion">Ubicación:</label>
+        <input type="text" id="fincaUbicacion" required>
+
+        <label for="fincaEstado">Estado:</label>
+        <select id="fincaEstado">
+          <option value="ACTIVA">ACTIVA</option>
+          <option value="INACTIVA">INACTIVA</option>
+        </select>
+
+        <div class="modal-buttons">
+          <button type="submit" class="btn-agregar">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="../i18n.js"></script>
+</body>
+</html>

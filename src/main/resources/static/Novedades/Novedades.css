@@ -1,0 +1,172 @@
+@import url('../dashboard/dashboard.css');
+
+/* Tabla */
+.tabla-container {
+  background: var(--blanco);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.tabla-container h2 {
+  margin-bottom: 12px;
+  color: var(--verde-oscuro);
+}
+
+.tabla-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-container th, .tabla-container td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.tabla-container th {
+  background: var(--gris-claro);
+}
+
+.tabla-container tr:hover {
+  background: #f9f9f9;
+}
+
+/* ===== FILTRO DE FECHAS ===== */
+.filtros-container {
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.filtro-fechas {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.fecha-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fecha-grupo label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gris-texto);
+}
+
+.fecha-grupo input[type="date"] {
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: white;
+  min-width: 150px;
+}
+
+.fecha-grupo input[type="date"]:focus {
+  border-color: var(--verde-texto);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.btn-limpiar {
+  padding: 10px 16px;
+  background: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-limpiar:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+}
+
+.resultados-texto {
+  font-size: 14px;
+  color: var(--gris-texto);
+  font-weight: 600;
+  padding: 8px 16px;
+  background: #e8f5e9;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.no-resultados {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gris-texto);
+  font-size: 16px;
+}
+
+.no-resultados::before {
+  content: "🔍";
+  display: block;
+  font-size: 48px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+/* Botones */
+.btn-acciones {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-eliminar {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: #ffebee;
+  color: #b71c1c;
+  border: 1px solid #ef9a9a;
+}
+
+.btn-eliminar:hover {
+  background: #ffcdd2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(183, 28, 28, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtro-fechas {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .fecha-grupo {
+    width: 100%;
+  }
+  
+  .fecha-grupo input[type="date"] {
+    width: 100%;
+  }
+}
