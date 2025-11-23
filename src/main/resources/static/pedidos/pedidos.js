@@ -49,18 +49,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         estadoClass = "estado-pendiente";
       }
 
-      // CAMPOS CORREGIDOS SEGÚN TU JSON REAL
-      const nombreFinca = p.finca?.nombre || "Sin finca";
-      const ubicacionFinca = p.finca?.ubicacion || "Sin ubicación";
-      const fertilizante = p.tipo_fertilizante || "-";                    // ← con guion bajo
-      const cantidad = p.cantidad || "-";
+      // CORREGIDO PARA TU BASE DE DATOS ACTUAL (finca es string, no objeto)
+      const nombreFinca = p.finca || "Sin finca";
+      const ubicacionFinca = p.ubicacion || "Sin ubicación";
+      const fertilizante = p.tipo_fertilizante || "-";
       const fechaRequerida = p.fecha_requerida 
         ? new Date(p.fecha_requerida).toLocaleDateString('es-ES') 
-        : "-";                                                            // ← con guion bajo
+        : "-";
       const fechaSolicitud = p.fecha_solicitud 
         ? new Date(p.fecha_solicitud).toLocaleString('es-ES', {
-            day: '2-digit', month: '2-digit', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
           }) 
         : "-";
 
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td>${nombreFinca}</td>
         <td>${ubicacionFinca}</td>
         <td>${fertilizante}</td>
-        <td>${cantidad}</td>
+        <td>${p.cantidad}</td>
         <td>${fechaRequerida}</td>
         <td>${fechaSolicitud}</td>
         <td>${p.motivo || "-"}</td>
@@ -99,7 +101,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       pedidosGlobal = pedidos;
 
-      // Actualizar contadores
       totalPedidos.textContent = pedidos.length;
       pendientes.textContent = pedidos.filter(p => p.estado === "PENDIENTE").length;
       aprobados.textContent = pedidos.filter(p => p.estado === "APROBADA").length;
@@ -109,8 +110,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       actualizarContadorResultados(pedidos.length, pedidos.length);
 
     } catch (err) {
-      console.error('Error al cargar pedidos:', err);
-      tablaPedidos.innerHTML = `<tr><td colspan="11" style="color:red;">Error al conectar con el servidor</td></tr>`;
+      console.error('Error:', err);
+      tablaPedidos.innerHTML = `<tr><td colspan="11" style="color:red;">Error al conectar</td></tr>`;
     }
   }
 
@@ -119,8 +120,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const estadoSel = filtroEstado.value;
 
     const filtrados = pedidosGlobal.filter(p => {
-      const enFinca = p.finca?.nombre?.toLowerCase().includes(texto) || false;
-      const enUbicacion = (p.finca?.ubicacion?.toLowerCase().includes(texto)) || false;
+      const enFinca = (p.finca?.toLowerCase().includes(texto)) || false;
+      const enUbicacion = (p.ubicacion?.toLowerCase().includes(texto)) || false;
       const enFertilizante = (p.tipo_fertilizante?.toLowerCase().includes(texto)) || false;
       const enMotivo = (p.motivo?.toLowerCase().includes(texto)) || false;
 
@@ -154,30 +155,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     aplicarFiltros();
   });
 
-  // Cambiar estado del pedido
   window.cambiarEstado = async (id, estado) => {
     try {
-      const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { 
-        method: "PUT" 
-      });
+      const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { method: "PUT" });
 
       if (res.ok) {
         alert(`Pedido ${estado.toLowerCase()} correctamente`);
-        cargarPedidos(); // Recarga completa
+        cargarPedidos();
       } else {
         const error = await res.text();
         alert("Error: " + error);
       }
     } catch (err) {
-      alert("Error de conexión con el servidor");
+      alert("Error de conexión");
     }
   };
 
-  // CARGAR AL INICIO
   cargarPedidos();
 });
 
-// Cerrar sesión 
 function cerrarSesion() {
   if (confirm("¿Cerrar sesión?")) {
     localStorage.clear();
