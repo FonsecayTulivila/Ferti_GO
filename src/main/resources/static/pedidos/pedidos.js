@@ -4,59 +4,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const pendientes = document.getElementById("pendientes");
   const aprobados = document.getElementById("aprobados");
   const rechazados = document.getElementById("rechazados");
-
   const buscador = document.getElementById("buscadorPedidos");
   const filtroEstado = document.getElementById("filtroEstado");
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
   const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
-
   let pedidosGlobal = [];
 
   function renderizarPedidos(pedidos) {
     tablaPedidos.innerHTML = "";
 
     if (pedidos.length === 0) {
-      tablaPedidos.innerHTML = `<tr><td colspan="11" class="no-resultados">No hay pedidos</td></tr>`;
+      tablaPedidos.innerHTML = `<tr><td colspan="12" class="no-resultados">No se encontraron pedidos</td></tr>`;
       return;
     }
 
     pedidos.forEach(p => {
       const fila = document.createElement("tr");
 
-      // Colores
-      let estadoColor = "";
-      if (p.estado === "APROBADA") estadoColor = "style='background:#c8e6c9;color:#1b5e20;font-weight:bold;'";
-      if (p.estado === "RECHAZADA") estadoColor = "style='background:#ffcdd2;color:#b71c1c;font-weight:bold;'";
-      if (p.estado === "PENDIENTE") estadoColor = "style='background:#fff9c4;color:#f57f17;font-weight:bold;'";
-
-      // ESTOS SON LOS NOMBRES REALES QUE DEVUELVE TU API
-      const id = p.id_solicitud || p.idSolicitud || "-";
-      const finca = p.finca || "Sin finca";
-      const ubicacion = p.ubicacion || "Sin ubicación";
-      const fertilizante = p.tipo_fertilizante || "-";
-      const cantidad = p.cantidad || "-";
-      const fechaReq = p.fecha_requerida ? new Date(p.fecha_requerida).toLocaleDateString('es-ES') : "-";
-      const fechaSol = p.fecha_solicitud ? new Date(p.fecha_solicitud).toLocaleString('es-ES') : "-";
+      // Colores de estado
+      let colorEstado = "";
+      if (p.estado === "APROBADA") colorEstado = "style='background:#d4edda;color:#155724;font-weight:bold;'";
+      if (p.estado === "RECHAZADA") colorEstado = "style='background:#f8d7da;color:#721c24;font-weight:bold;'";
+      if (p.estado === "PENDIENTE") colorEstado = "style='background:#fff3cd;color:#856404;font-weight:bold;'";
 
       fila.innerHTML = `
-        <td>${id}</td>
-        <td>${finca}</td>
-        <td>${ubicacion}</td>
-        <td>${fertilizante}</td>
-        <td>${cantidad}</td>
-        <td>${fechaReq}</td>
-        <td>${fechaSol}</td>
+        <td>${p.id_solicitud}</td>
+        <td>${p.finca || "Sin finca"}</td>
+        <td>${p.ubicacion || "Sin ubicación"}</td>
+        <td>${p.tipo_fertilizante || "-"}</td>
+        <td>${p.cantidad}</td>
+        <td>${p.fecha_requerida ? new Date(p.fecha_requerida).toLocaleDateString('es-ES') : "-"}</td>
+        <td>${p.fecha_solicitud ? new Date(p.fecha_solicitud).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : "-"}</td>
         <td>${p.motivo || "-"}</td>
         <td>${p.notas || "-"}</td>
         <td>${p.prioridad || "-"}</td>
-        <td ${estadoColor}>${p.estado || "-"}</td>
+        <td ${colorEstado}>${p.estado}</td>
         <td class="btn-acciones">
           ${p.estado === "PENDIENTE" 
-            ? `<button class="btn-aprobar" onclick="cambiarEstado(${id}, 'APROBADA')">Aprobar</button>
-               <button class="btn-rechazar" onclick="cambiarEstado(${id}, 'RECHAZADA')">Rechazar</button>`
-            : `<em>—</em>`
+            ? `<button class="btn-aprobar" onclick="cambiarEstado(${p.id_solicitud}, 'APROBADA')">Aprobar</button>
+               <button class="btn-rechazar" onclick="cambiarEstado(${p.id_solicitud}, 'RECHAZADA')">Rechazar</button>`
+            : "—"
           }
         </td>
       `;
@@ -68,9 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const res = await fetch(BASE);
       if (!res.ok) throw new Error("Error " + res.status);
-
       const pedidos = await res.json();
-      console.log("PEDIDOS REALES:", pedidos); // AQUÍ VERÁS LOS NOMBRES EXACTOS
+
+      console.log("PEDIDOS CARGADOS CORRECTAMENTE:", pedidos);
 
       pedidosGlobal = pedidos;
 
@@ -81,8 +70,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       renderizarPedidos(pedidos);
     } catch (err) {
-      console.error(err);
-      tablaPedidos.innerHTML = `<tr><td colspan="11" style="color:red;">Error de conexión</td></tr>`;
+      console.error("Error:", err);
+      tablaPedidos.innerHTML = `<tr><td colspan="12" style="color:red;">Error de conexión</td></tr>`;
     }
   }
 
@@ -91,13 +80,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const estadoSel = filtroEstado.value;
 
     const filtrados = pedidosGlobal.filter(p => {
-      const busca = texto === "" || 
+      const coincideTexto = texto === "" ||
         (p.finca?.toLowerCase().includes(texto)) ||
         (p.ubicacion?.toLowerCase().includes(texto)) ||
         (p.tipo_fertilizante?.toLowerCase().includes(texto));
 
-      const estadoOk = estadoSel === "TODOS" || p.estado === estadoSel;
-      return busca && estadoOk;
+      const coincideEstado = estadoSel === "TODOS" || p.estado === estadoSel;
+      return coincideTexto && coincideEstado;
     });
 
     renderizarPedidos(filtrados);
@@ -113,14 +102,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     aplicarFiltros();
   });
 
-  window.cambiarEstado = async (id, estado) => {
+  window.cambiarEstado = async (id, nuevoEstado) => {
     try {
-      const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { method: "PUT" });
+      const res = await fetch(`${BASE}/${id}/estado?estado=${nuevoEstado}`, { method: "PUT" });
       if (res.ok) {
-        alert(`Pedido ${estado.toLowerCase()} correctamente`);
+        alert(`Pedido ${nuevoEstado.toLowerCase()} correctamente`);
         cargarPedidos();
       } else {
-        alert("Error al actualizar");
+        alert("Error al cambiar estado");
       }
     } catch {
       alert("Error de conexión");
