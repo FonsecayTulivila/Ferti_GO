@@ -23,7 +23,6 @@ public class SolicitudFertilizante {
     private String notas;
     private String prioridad;
 
-    // ⭐ Cambiado a nullable = true para soportar registros antiguos
     @Column(name = "fecha_solicitud", updatable = false)
     private LocalDateTime fechaSolicitud;
 
