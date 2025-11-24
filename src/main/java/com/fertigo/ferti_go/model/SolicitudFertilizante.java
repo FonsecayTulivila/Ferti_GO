@@ -16,7 +16,7 @@ public class SolicitudFertilizante {
 
     private String finca;
     private String ubicacion;
-    private String tipoFertilizante;
+    private String tipo_Fertilizante;
     private Float cantidad;
     private LocalDate fechaRequerida;
     private String motivo;
