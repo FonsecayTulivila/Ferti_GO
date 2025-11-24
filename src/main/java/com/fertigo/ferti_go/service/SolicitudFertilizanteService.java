@@ -82,7 +82,7 @@ public class SolicitudFertilizanteService {
         return "Estado actualizado a: " + estado;
     }
 
-    // Eliminar solicitud
+    // Eliminar solicituds
     public void eliminarSolicitud(Long id, UsuarioModel usuario) {
         SolicitudFertilizante solicitud = obtenerSolicitud(id);
 
