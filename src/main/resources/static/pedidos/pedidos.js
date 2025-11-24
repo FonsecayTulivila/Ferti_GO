@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
-  const BASE = "http://localhost:8080/solicitudFertilizante";
+  const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
 
   let pedidosGlobal = []; // Array global para filtrado
 
