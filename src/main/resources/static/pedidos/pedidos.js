@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const aprobados = document.getElementById("aprobados");
   const rechazados = document.getElementById("rechazados");
 
-  // Elementos de filtros
   const buscador = document.getElementById("buscadorPedidos");
   const filtroEstado = document.getElementById("filtroEstado");
   const fechaDesde = document.getElementById("fechaDesde");
@@ -15,23 +14,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
 
-  let pedidosGlobal = []; // Array global para filtrado
+  let pedidosGlobal = [];
 
-  // Función auxiliar para extraer fecha sin hora
   function obtenerFechaSolo(fechaString) {
     if (!fechaString) return null;
     const fecha = new Date(fechaString);
     return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
   }
 
-  // Renderizar pedidos en tabla
   function renderizarPedidos(pedidos) {
     tablaPedidos.innerHTML = "";
 
     if (pedidos.length === 0) {
       tablaPedidos.innerHTML = `
         <tr>
-          <td colspan="11" class="no-resultados">
+          <td colspan="12" class="no-resultados">
             No se encontraron pedidos con los criterios seleccionados
           </td>
         </tr>
@@ -41,9 +38,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     pedidos.forEach(p => {
       const fila = document.createElement("tr");
-      fila.dataset.id = p.idSolicitud;
+      fila.dataset.id = p.id_solicitud;
 
-      // Colores más intensos para los estados
       let estadoColor = "";
       let estadoClass = "";
       
@@ -60,23 +56,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         estadoClass = "estado-pendiente";
       }
 
+      // Formatear fecha de solicitud
+      let fechaSolicitudFormateada = "-";
+      if (p.fecha_solicitud) {
+        const fecha = new Date(p.fecha_solicitud);
+        fechaSolicitudFormateada = fecha.toLocaleString('es-ES', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
       fila.innerHTML = `
-        <td>${p.idSolicitud}</td>
-        <td>${p.finca}</td>
-        <td>${p.ubicacion}</td>
-        <td>${p.tipoFertilizante}</td>
-        <td>${p.cantidad}</td>
-        <td>${p.fechaRequerida}</td>
-        <td>${p.motivo}</td>
+        <td>${p.id_solicitud || '-'}</td>
+        <td>${p.finca || '-'}</td>
+        <td>${p.ubicacion || '-'}</td>
+        <td>${p.tipo_fertilizante || '-'}</td>
+        <td>${p.cantidad || '-'}</td>
+        <td>${p.fecha_requerida || '-'}</td>
+        <td>${fechaSolicitudFormateada}</td>
+        <td>${p.motivo || '-'}</td>
         <td>${p.notas || "-"}</td>
-        <td>${p.prioridad}</td>
-        <td ${estadoColor} class="${estadoClass}">${p.estado}</td>
+        <td>${p.prioridad || '-'}</td>
+        <td ${estadoColor} class="${estadoClass}">${p.estado || '-'}</td>
         <td class="btn-acciones">
           ${
             p.estado === "PENDIENTE"
               ? `
-                <button class="btn-aprobar" onclick="cambiarEstado(${p.idSolicitud}, 'APROBADA')">Aprobar</button>
-                <button class="btn-rechazar" onclick="cambiarEstado(${p.idSolicitud}, 'RECHAZADA')">Rechazar</button>
+                <button class="btn-aprobar" onclick="cambiarEstado(${p.id_solicitud}, 'APROBADA')">Aprobar</button>
+                <button class="btn-rechazar" onclick="cambiarEstado(${p.id_solicitud}, 'RECHAZADA')">Rechazar</button>
               `
               : `<em>—</em>`
           }
@@ -86,16 +96,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Cargar solicitudes
   async function cargarPedidos() {
     try {
+      console.log('Cargando pedidos desde:', BASE);
       const res = await fetch(BASE);
-      if (!res.ok) throw new Error("Error al obtener los pedidos");
+      
+      if (!res.ok) {
+        console.error('Error HTTP:', res.status);
+        throw new Error("Error al obtener los pedidos");
+      }
+      
       const pedidos = await res.json();
+      console.log('Pedidos recibidos:', pedidos.length);
+      
+      if (pedidos.length > 0) {
+        console.log('Primer pedido:', pedidos[0]);
+      }
 
-      pedidosGlobal = pedidos; // Guardar en variable global
+      pedidosGlobal = pedidos;
 
-      // Actualizar contadores totales (siempre con todos los pedidos)
       totalPedidos.textContent = pedidos.length;
       pendientes.textContent = pedidos.filter(p => p.estado === "PENDIENTE").length;
       aprobados.textContent = pedidos.filter(p => p.estado === "APROBADA").length;
@@ -104,12 +123,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderizarPedidos(pedidos);
       actualizarContadorResultados(pedidos.length, pedidos.length);
     } catch (err) {
-      console.error(err);
-      alert("No se pudieron cargar los pedidos.");
+      console.error('Error completo:', err);
+      tablaPedidos.innerHTML = `
+        <tr>
+          <td colspan="12" class="no-resultados">
+            Error al cargar pedidos. Revisa la consola (F12).
+          </td>
+        </tr>
+      `;
     }
   }
 
-  // ===== FUNCIONES DE FILTRADO =====
   function aplicarFiltros() {
     const textoBusqueda = buscador.value.toLowerCase().trim();
     const estadoSeleccionado = filtroEstado.value;
@@ -117,41 +141,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     const fechaMax = fechaHasta.value ? new Date(fechaHasta.value + "T23:59:59") : null;
 
     const pedidosFiltrados = pedidosGlobal.filter(p => {
-      // Filtro por texto (finca, ubicación o fertilizante)
       const coincideTexto = textoBusqueda === "" || 
         (p.finca && p.finca.toLowerCase().includes(textoBusqueda)) ||
         (p.ubicacion && p.ubicacion.toLowerCase().includes(textoBusqueda)) ||
-        (p.tipoFertilizante && p.tipoFertilizante.toLowerCase().includes(textoBusqueda));
+        (p.tipo_fertilizante && p.tipo_fertilizante.toLowerCase().includes(textoBusqueda));
 
-      // Filtro por estado
       const coincideEstado = estadoSeleccionado === "TODOS" || p.estado === estadoSeleccionado;
 
-      // ✅ FILTRO POR FECHA DE CREACIÓN (no por fechaRequerida)
       let coincideFecha = true;
       
-      // IMPORTANTE: Ajusta 'fechaCreacion' al nombre exacto del campo en tu API
-      // Posibles nombres: fechaCreacion, fechaSolicitud, createdAt, fecha, fechaRegistro
-      const campoFecha = p.fechaCreacion || p.fechaSolicitud || p.createdAt || p.fecha;
-      
-      if ((fechaMin || fechaMax) && campoFecha) {
-        const fechaSolicitud = obtenerFechaSolo(campoFecha);
+      if ((fechaMin || fechaMax) && p.fecha_solicitud) {
+        const fechaSolicitud = obtenerFechaSolo(p.fecha_solicitud);
         
         if (fechaMin && fechaMax) {
-          // Filtrar por rango: entre fechaMin y fechaMax (inclusive)
           const fechaMinSolo = obtenerFechaSolo(fechaMin);
           const fechaMaxSolo = obtenerFechaSolo(fechaMax);
           coincideFecha = fechaSolicitud >= fechaMinSolo && fechaSolicitud <= fechaMaxSolo;
         } else if (fechaMin) {
-          // Solo desde una fecha
           const fechaMinSolo = obtenerFechaSolo(fechaMin);
           coincideFecha = fechaSolicitud >= fechaMinSolo;
         } else if (fechaMax) {
-          // Solo hasta una fecha
           const fechaMaxSolo = obtenerFechaSolo(fechaMax);
           coincideFecha = fechaSolicitud <= fechaMaxSolo;
         }
       } else if (fechaMin || fechaMax) {
-        // Si hay filtro de fecha pero el pedido no tiene fecha de creación, excluirlo
         coincideFecha = false;
       }
 
@@ -184,14 +197,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     aplicarFiltros();
   }
 
-  // Event listeners para filtros
   buscador.addEventListener("input", aplicarFiltros);
   filtroEstado.addEventListener("change", aplicarFiltros);
   fechaDesde.addEventListener("change", aplicarFiltros);
   fechaHasta.addEventListener("change", aplicarFiltros);
   btnLimpiarFiltros.addEventListener("click", limpiarFiltros);
 
-  // Cambiar estado
   window.cambiarEstado = async (id, estado) => {
     try {
       const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { method: "PUT" });
@@ -200,7 +211,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert(`Pedido ${estado.toLowerCase()} correctamente`);
         setTimeout(async () => {
           await cargarPedidos();
-          // Mantener los filtros activos después de actualizar
           aplicarFiltros();
         }, 800);
       } else {
