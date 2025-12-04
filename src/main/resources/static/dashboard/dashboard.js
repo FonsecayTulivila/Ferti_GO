@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const BASE_URL =
     window.location.hostname === "localhost"
       ? "http://localhost:8080"
-      : "https://fertigo-production.up.railway.app";
+      : "https://fertigo-production-0cf0.up.railway.app";
 
   const API_USUARIOS = `${BASE_URL}/usuario`;
   const API_FERTILIZANTES = `${BASE_URL}/fertilizante`;

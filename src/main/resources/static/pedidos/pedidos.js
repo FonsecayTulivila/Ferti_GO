@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
-  const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
+  const BASE = "https://fertigo-production-0cf0.up.railway.app/solicitudFertilizante";
 
   let pedidosGlobal = [];
 

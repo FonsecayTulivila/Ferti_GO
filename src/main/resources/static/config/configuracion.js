@@ -1,5 +1,5 @@
-const API_URL = 'https://fertigo-production.up.railway.app/usuario';
-const API_CONFIG_URL = 'https://fertigo-production.up.railway.app/api/configuracion';
+const API_URL = 'https://fertigo-production-0cf0.up.railway.app/usuario';
+const API_CONFIG_URL = 'https://fertigo-production-0cf0.up.railway.app/api/configuracion';
 let usuarioActual = null;
 let configuracionId = null;
 

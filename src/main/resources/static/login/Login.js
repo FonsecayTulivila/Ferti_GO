@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const API_URL =
         window.location.hostname === "localhost"
           ? "http://localhost:8080"
-          : "https://fertigo-production.up.railway.app";
+          : "https://fertigo-production-0cf0.up.railway.app";
 
       const response = await fetch(`${API_URL}/usuario/login`, {
         method: "POST",
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const BASE_URL =
             window.location.hostname === "localhost"
               ? "http://localhost:8080"
-              : "https://fertigo-production.up.railway.app";
+              : "https://fertigo-production-0cf0.up.railway.app";
 
           window.location.href = `${BASE_URL}/dashboard/dashboard.html`;
         }, 1000);

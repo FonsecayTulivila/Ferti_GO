@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 const BASE = window.location.hostname === "localhost"
   ? "http://localhost:8080/usuario"
-  : "https://fertigo-production.up.railway.app/usuario";
+  : "https://fertigo-production-0cf0.up.railway.app/usuario";
 
   // DOM
   const tablaUsuarios = document.getElementById("tablaUsuarios");

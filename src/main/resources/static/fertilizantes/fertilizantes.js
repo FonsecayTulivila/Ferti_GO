@@ -12,7 +12,7 @@ const resultadosFiltros = document.getElementById("resultadosFiltros");
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:8080"
-    : "https://fertigo-production.up.railway.app";
+    : "https://fertigo-production-0cf0.up.railway.app";
 
 const API_URL = `${BASE_URL}/fertilizante`;
 const ID_ADMIN = 1;

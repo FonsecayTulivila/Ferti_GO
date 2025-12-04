@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
   // CAMBIO: URL fija de Railway
-  const API_URL = "https://fertigo-production.up.railway.app/novedades";
+  const API_URL = "https://fertigo-production-0cf0.up.railway.app/novedades";
 
   let novedadesGlobal = [];
 
