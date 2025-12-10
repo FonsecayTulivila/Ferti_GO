@@ -14,16 +14,28 @@ public class Novedades {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_novedad")
     private Long idNovedad;
+
     @NotBlank(message = "El nombre es obligatorio")
+    @Column(name = "nombre")
     private String nombre;
+
     @NotBlank(message = "El nombre de la finca es obligatorio")
+    @Column(name = "nombre_de_finca")
     private String nombreDeFinca;
+
     @Email(message = "Correo no válido")
+    @Column(name = "correo")
     private String correo;
+
     @NotBlank(message = "El mensaje es obligatorio")
+    @Column(name = "novedad")
     private String novedad;
+
+    @Column(name = "fecha_envio")
     private LocalDate fechaEnvio;
+
     @PrePersist
     public void asignarFecha() {
         this.fechaEnvio = LocalDate.now();
