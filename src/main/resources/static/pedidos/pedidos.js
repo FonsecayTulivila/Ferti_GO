@@ -12,7 +12,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
-  const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
+  const BASE_URL = window.location.hostname === "localhost"
+    ? "http://localhost:8080"
+    : "https://fertigo-production-0cf0.up.railway.app";
+  
+  const BASE = `${BASE_URL}/solicitudFertilizante`;
+  const BASE_FERTILIZANTE = `${BASE_URL}/fertilizante`;
+  const ID_ADMIN = 1;
 
   let pedidosGlobal = [];
 
@@ -203,12 +209,124 @@ document.addEventListener("DOMContentLoaded", async () => {
   fechaHasta.addEventListener("change", aplicarFiltros);
   btnLimpiarFiltros.addEventListener("click", limpiarFiltros);
 
+  // NUEVA FUNCIÓN: Buscar fertilizante por tipo
+  async function buscarFertilizantePorTipo(tipoFertilizante) {
+    try {
+      const res = await fetch(BASE_FERTILIZANTE);
+      if (!res.ok) throw new Error("Error al obtener fertilizantes");
+      
+      const fertilizantes = await res.json();
+      
+      // Buscar el fertilizante que coincida con el tipo (nombre o tipo)
+      const fertilizante = fertilizantes.find(f => 
+        f.nombre.toLowerCase() === tipoFertilizante.toLowerCase() ||
+        f.tipo.toLowerCase() === tipoFertilizante.toLowerCase()
+      );
+      
+      return fertilizante;
+    } catch (err) {
+      console.error("Error buscando fertilizante:", err);
+      return null;
+    }
+  }
+
+  // NUEVA FUNCIÓN: Descontar cantidad del fertilizante
+  async function descontarInventarioFertilizante(fertilizanteId, cantidadActual, cantidadADescontar) {
+    try {
+      // Obtener los datos completos del fertilizante
+      const resFertilizante = await fetch(`${BASE_FERTILIZANTE}/${fertilizanteId}`);
+      if (!resFertilizante.ok) throw new Error("Error al obtener datos del fertilizante");
+      
+      const fertilizante = await resFertilizante.json();
+      
+      // Calcular nueva cantidad
+      const nuevaCantidad = cantidadActual - cantidadADescontar;
+      
+      // Actualizar fertilizante con la nueva cantidad
+      const resUpdate = await fetch(`${BASE_FERTILIZANTE}/${ID_ADMIN}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json; charset=UTF-8" },
+        body: JSON.stringify({
+          id: fertilizanteId,
+          nombre: fertilizante.nombre,
+          tipo: fertilizante.tipo,
+          cantidad: nuevaCantidad,
+          unidad: fertilizante.unidad,
+          descripcion: fertilizante.descripcion || ""
+        })
+      });
+      
+      if (!resUpdate.ok) {
+        throw new Error("Error al actualizar inventario del fertilizante");
+      }
+      
+      return { success: true, nuevaCantidad };
+    } catch (err) {
+      console.error("Error descontando inventario:", err);
+      return { success: false, error: err.message };
+    }
+  }
+
   window.cambiarEstado = async (id, estado) => {
     try {
+      // Obtener los detalles del pedido antes de cambiar el estado
+      const pedido = pedidosGlobal.find(p => p.id_solicitud === id);
+      
+      if (!pedido) {
+        alert("No se encontró el pedido");
+        return;
+      }
+
+      // Si se está aprobando, verificar y descontar inventario
+      if (estado === "APROBADA") {
+        // Buscar el fertilizante correspondiente
+        const fertilizante = await buscarFertilizantePorTipo(pedido.tipo_fertilizante);
+        
+        if (!fertilizante) {
+          alert(`⚠️ No se encontró el fertilizante "${pedido.tipo_fertilizante}" en el inventario. No se puede aprobar el pedido.`);
+          return;
+        }
+        
+        // Verificar que haya suficiente cantidad
+        if (fertilizante.cantidad < pedido.cantidad) {
+          alert(`⚠️ Inventario insuficiente. Disponible: ${fertilizante.cantidad} ${fertilizante.unidad}. Solicitado: ${pedido.cantidad} ${fertilizante.unidad}`);
+          return;
+        }
+        
+        // Confirmar la aprobación
+        const confirmar = confirm(
+          `¿Aprobar este pedido?\n\n` +
+          `Fertilizante: ${pedido.tipo_fertilizante}\n` +
+          `Cantidad a descontar: ${pedido.cantidad} ${fertilizante.unidad}\n` +
+          `Inventario actual: ${fertilizante.cantidad} ${fertilizante.unidad}\n` +
+          `Inventario después: ${fertilizante.cantidad - pedido.cantidad} ${fertilizante.unidad}`
+        );
+        
+        if (!confirmar) return;
+        
+        // Descontar del inventario
+        const resultado = await descontarInventarioFertilizante(
+          fertilizante.id,
+          fertilizante.cantidad,
+          pedido.cantidad
+        );
+        
+        if (!resultado.success) {
+          alert(`❌ Error al actualizar inventario: ${resultado.error}`);
+          return;
+        }
+      }
+
+      // Cambiar el estado del pedido
       const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { method: "PUT" });
 
       if (res.ok) {
-        alert(`Pedido ${estado.toLowerCase()} correctamente`);
+        if (estado === "APROBADA") {
+          alert(`✅ Pedido aprobado correctamente\n📦 Inventario actualizado`);
+        } else {
+          alert(`✅ Pedido ${estado.toLowerCase()} correctamente`);
+        }
+        
         setTimeout(async () => {
           await cargarPedidos();
           aplicarFiltros();
