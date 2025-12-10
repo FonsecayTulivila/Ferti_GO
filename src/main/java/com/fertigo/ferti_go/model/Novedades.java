@@ -17,6 +17,10 @@ public class Novedades {
     @Column(name = "id_novedad")
     private Long idNovedad;
 
+    @Email(message = "Correo no válido")
+    @Column(name = "correo")
+    private String correo;
+
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre")
     private String nombre;
@@ -25,11 +29,7 @@ public class Novedades {
     @Column(name = "nombre_de_finca")
     private String nombreDeFinca;
 
-    @Email(message = "Correo no válido")
-    @Column(name = "correo")
-    private String correo;
-
-    @NotBlank(message = "El mensaje es obligatorio")
+    @NotBlank(message = "La novedad es obligatoria")
     @Column(name = "novedad")
     private String novedad;
 
