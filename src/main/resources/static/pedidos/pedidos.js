@@ -12,8 +12,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
   const resultadosFiltros = document.getElementById("resultadosFiltros");
 
-  const BASE = "https://fertigo-production.up.railway.app/solicitudFertilizante";
-  const BASE_FERTILIZANTE = "https://fertigo-production.up.railway.app/fertilizante";
+  const BASE_URL = window.location.hostname === "localhost"
+    ? "http://localhost:8080"
+    : "https://fertigo-production.up.railway.app";
+  
+  const BASE = `${BASE_URL}/solicitudFertilizante`;
+  const BASE_FERTILIZANTE = `${BASE_URL}/fertilizante`;
   const ID_ADMIN = 1;
 
   let pedidosGlobal = [];
