@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("contactForm");
   const mensajeEstado = document.createElement("p");
 
-  // Insertamos el mensaje de estado justo debajo del formulario
   mensajeEstado.style.marginTop = "10px";
   mensajeEstado.style.fontWeight = "bold";
   form.parentNode.appendChild(mensajeEstado);

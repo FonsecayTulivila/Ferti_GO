@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +46,12 @@ public class NovedadesController {
     public void eliminarNovedad(@PathVariable Long id) {
         novedadesService.eliminarNovedad(id);
     }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> manejarValidaciones(MethodArgumentNotValidException ex) {
+    String error = ex.getBindingResult().getFieldError().getDefaultMessage();
+    return ResponseEntity.badRequest().body(error);
+    }
+
 
 
 

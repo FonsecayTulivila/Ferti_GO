@@ -18,6 +18,7 @@ public class Novedades {
     private Long idNovedad;
 
     @Email(message = "Correo no válido")
+    @NotBlank(message = "El correo es obligatorio")  
     @Column(name = "correo")
     private String correo;
 

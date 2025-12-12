@@ -1,4 +1,3 @@
-/* Reset y configuración base */
 * {
     margin: 0;
     padding: 0;
@@ -38,13 +37,13 @@ nav {
     align-items: center;
 }
 #contacto h2 {
-  margin-bottom: 0.5rem; /* Reduce espacio debajo del título */
+  margin-bottom: 0.5rem; 
 }
 
 #contacto p {
-  margin-top: 0; /* Quita espacio extra arriba del párrafo */
-  margin-bottom: 1.5rem; /* Mantén un poco de aire debajo del texto */
-  color: #333; /* opcional para que se vea más sutil */
+  margin-top: 0; 
+  margin-bottom: 1.5rem; 
+  color: #333;
 }
 
 .logo {
