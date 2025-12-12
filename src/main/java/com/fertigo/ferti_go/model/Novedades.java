@@ -7,6 +7,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "novedades")
 @Data
@@ -18,14 +20,15 @@ public class Novedades {
     private Long idNovedad;
 
     @Email(message = "Correo no válido")
-    @NotBlank(message = "El correo es obligatorio")  
+    @NotBlank(message = "El correo es obligatorio") 
     @Column(name = "correo")
     private String correo;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Column(name = "nombre")
     private String nombre;
-
+    
+    @JsonProperty("nombreDeFinca")
     @NotBlank(message = "El nombre de la finca es obligatorio")
     @Column(name = "nombre_de_finca")
     private String nombreDeFinca;
