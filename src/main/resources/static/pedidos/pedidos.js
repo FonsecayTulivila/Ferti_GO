@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   fechaHasta.addEventListener("change", aplicarFiltros);
   btnLimpiarFiltros.addEventListener("click", limpiarFiltros);
 
-  // NUEVA FUNCIÓN: Buscar fertilizante por tipo
+  // Buscar fertilizante por tipo o nombre
   async function buscarFertilizantePorTipo(tipoFertilizante) {
     try {
       const res = await fetch(BASE_FERTILIZANTE);
@@ -230,24 +230,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // NUEVA FUNCIÓN: Descontar cantidad del fertilizante
-  async function descontarInventarioFertilizante(fertilizanteId, cantidadActual, cantidadADescontar) {
+  // Descontar cantidad del inventario de fertilizante
+  async function descontarInventarioFertilizante(fertilizante, cantidadADescontar) {
     try {
-      // Obtener los datos completos del fertilizante
-      const resFertilizante = await fetch(`${BASE_FERTILIZANTE}/${fertilizanteId}`);
-      if (!resFertilizante.ok) throw new Error("Error al obtener datos del fertilizante");
-      
-      const fertilizante = await resFertilizante.json();
-      
       // Calcular nueva cantidad
-      const nuevaCantidad = cantidadActual - cantidadADescontar;
+      const nuevaCantidad = fertilizante.cantidad - cantidadADescontar;
       
-      // Actualizar fertilizante con la nueva cantidad
-      const resUpdate = await fetch(`${BASE_FERTILIZANTE}/${ID_ADMIN}`, {
+      if (nuevaCantidad < 0) {
+        throw new Error("La cantidad resultante no puede ser negativa");
+      }
+      
+      // ⚠️ IMPORTANTE: El endpoint PUT espera el ID en la URL, NO en el body
+      const resUpdate = await fetch(`${BASE_FERTILIZANTE}/${fertilizante.id}/${ID_ADMIN}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json; charset=UTF-8" },
         body: JSON.stringify({
-          id: fertilizanteId,
           nombre: fertilizante.nombre,
           tipo: fertilizante.tipo,
           cantidad: nuevaCantidad,
@@ -257,9 +254,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
       
       if (!resUpdate.ok) {
-        throw new Error("Error al actualizar inventario del fertilizante");
+        const errorText = await resUpdate.text();
+        throw new Error(`Error al actualizar inventario: ${errorText}`);
       }
       
+      console.log(`✅ Inventario actualizado: ${fertilizante.nombre} - Nueva cantidad: ${nuevaCantidad}`);
       return { success: true, nuevaCantidad };
     } catch (err) {
       console.error("Error descontando inventario:", err);
@@ -267,80 +266,120 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Función para cambiar el estado del pedido
   window.cambiarEstado = async (id, estado) => {
     try {
-      // Obtener los detalles del pedido antes de cambiar el estado
+      // Obtener los detalles del pedido
       const pedido = pedidosGlobal.find(p => p.id_solicitud === id);
       
       if (!pedido) {
-        alert("No se encontró el pedido");
+        alert("❌ No se encontró el pedido");
         return;
       }
 
-      // Si se está aprobando, verificar y descontar inventario
+      // Si se está APROBANDO, verificar y descontar inventario
       if (estado === "APROBADA") {
+        console.log(`🔍 Buscando fertilizante: ${pedido.tipo_fertilizante}`);
+        
         // Buscar el fertilizante correspondiente
         const fertilizante = await buscarFertilizantePorTipo(pedido.tipo_fertilizante);
         
         if (!fertilizante) {
-          alert(`⚠️ No se encontró el fertilizante "${pedido.tipo_fertilizante}" en el inventario. No se puede aprobar el pedido.`);
+          alert(`⚠️ No se encontró el fertilizante "${pedido.tipo_fertilizante}" en el inventario.\n\nNo se puede aprobar el pedido.`);
           return;
         }
         
+        console.log(`📦 Fertilizante encontrado:`, fertilizante);
+        
         // Verificar que haya suficiente cantidad
         if (fertilizante.cantidad < pedido.cantidad) {
-          alert(`⚠️ Inventario insuficiente. Disponible: ${fertilizante.cantidad} ${fertilizante.unidad}. Solicitado: ${pedido.cantidad} ${fertilizante.unidad}`);
+          alert(
+            `⚠️ INVENTARIO INSUFICIENTE\n\n` +
+            `Fertilizante: ${fertilizante.nombre}\n` +
+            `Disponible: ${fertilizante.cantidad} ${fertilizante.unidad}\n` +
+            `Solicitado: ${pedido.cantidad} ${fertilizante.unidad}\n` +
+            `Faltante: ${pedido.cantidad - fertilizante.cantidad} ${fertilizante.unidad}`
+          );
           return;
         }
         
         // Confirmar la aprobación
         const confirmar = confirm(
-          `¿Aprobar este pedido?\n\n` +
-          `Fertilizante: ${pedido.tipo_fertilizante}\n` +
-          `Cantidad a descontar: ${pedido.cantidad} ${fertilizante.unidad}\n` +
+          `✅ APROBAR PEDIDO #${pedido.id_solicitud}\n\n` +
+          `📍 Finca: ${pedido.finca}\n` +
+          `🌱 Fertilizante: ${pedido.tipo_fertilizante}\n` +
+          `📦 Cantidad a descontar: ${pedido.cantidad} ${fertilizante.unidad}\n\n` +
           `Inventario actual: ${fertilizante.cantidad} ${fertilizante.unidad}\n` +
-          `Inventario después: ${fertilizante.cantidad - pedido.cantidad} ${fertilizante.unidad}`
+          `Inventario después: ${fertilizante.cantidad - pedido.cantidad} ${fertilizante.unidad}\n\n` +
+          `¿Continuar?`
+        );
+        
+        if (!confirmar) {
+          console.log("❌ Aprobación cancelada por el usuario");
+          return;
+        }
+        
+        console.log(`⏳ Descontando ${pedido.cantidad} del inventario...`);
+        
+        // Descontar del inventario
+        const resultado = await descontarInventarioFertilizante(fertilizante, pedido.cantidad);
+        
+        if (!resultado.success) {
+          alert(`❌ ERROR AL ACTUALIZAR INVENTARIO\n\n${resultado.error}`);
+          return;
+        }
+        
+        console.log(`✅ Inventario actualizado exitosamente`);
+      }
+
+      // Si se está RECHAZANDO, solo confirmar
+      if (estado === "RECHAZADA") {
+        const confirmar = confirm(
+          `⚠️ RECHAZAR PEDIDO #${pedido.id_solicitud}\n\n` +
+          `Finca: ${pedido.finca}\n` +
+          `Fertilizante: ${pedido.tipo_fertilizante}\n` +
+          `Cantidad: ${pedido.cantidad}\n\n` +
+          `¿Continuar?`
         );
         
         if (!confirmar) return;
-        
-        // Descontar del inventario
-        const resultado = await descontarInventarioFertilizante(
-          fertilizante.id,
-          fertilizante.cantidad,
-          pedido.cantidad
-        );
-        
-        if (!resultado.success) {
-          alert(`❌ Error al actualizar inventario: ${resultado.error}`);
-          return;
-        }
       }
 
-      // Cambiar el estado del pedido
-      const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { method: "PUT" });
+      // Cambiar el estado del pedido en el backend
+      console.log(`⏳ Actualizando estado del pedido a: ${estado}...`);
+      const res = await fetch(`${BASE}/${id}/estado?estado=${estado}`, { 
+        method: "PUT" 
+      });
 
       if (res.ok) {
         if (estado === "APROBADA") {
-          alert(`✅ Pedido aprobado correctamente\n📦 Inventario actualizado`);
-        } else {
-          alert(`✅ Pedido ${estado.toLowerCase()} correctamente`);
+          alert(
+            `✅ PEDIDO APROBADO EXITOSAMENTE\n\n` +
+            `Pedido #${id}\n` +
+            `📦 Inventario actualizado\n` +
+            `🌱 ${pedido.tipo_fertilizante}: -${pedido.cantidad}`
+          );
+        } else if (estado === "RECHAZADA") {
+          alert(`✅ Pedido #${id} rechazado correctamente`);
         }
         
+        // Recargar la tabla de pedidos
+        console.log("🔄 Recargando lista de pedidos...");
         setTimeout(async () => {
           await cargarPedidos();
           aplicarFiltros();
-        }, 800);
+        }, 500);
       } else {
         const errorText = await res.text();
-        alert("Error al actualizar estado: " + errorText);
+        alert(`❌ Error al actualizar estado del pedido:\n\n${errorText}`);
       }
     } catch (err) {
-      console.error(err);
-      alert("No se pudo conectar al servidor.");
+      console.error("❌ Error completo:", err);
+      alert(`❌ ERROR DE CONEXIÓN\n\nNo se pudo conectar al servidor.\n\n${err.message}`);
     }
   };
 
+  // Cargar pedidos al iniciar
   cargarPedidos();
 });
 
