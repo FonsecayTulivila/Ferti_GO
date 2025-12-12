@@ -1,8 +1,8 @@
-// usuarios.js
+// usuarios.js → VERSIÓN FINAL: SOLO MUESTRA CAPATACES
 document.addEventListener("DOMContentLoaded", () => {
-const BASE = window.location.hostname === "localhost"
-  ? "http://localhost:8080/usuario"
-  : "https://fertigo-production-0cf0.up.railway.app/usuario";
+  const BASE = window.location.hostname === "localhost"
+    ? "http://localhost:8080/usuario"
+    : "https://fertigo-production-0cf0.up.railway.app/usuario";
 
   // DOM
   const tablaUsuarios = document.getElementById("tablaUsuarios");
@@ -25,8 +25,9 @@ const BASE = window.location.hostname === "localhost"
   const inpFincaUbicacion = document.getElementById("fincaUbicacion");
   const selFincaEstado = document.getElementById("fincaEstado");
 
-  let editingId = null; // null => crear, id => editar
-  let usuariosGlobal = []; // Array global para filtrado
+  let editingId = null;
+  let usuariosGlobal = []; // ← Todos los usuarios del servidor
+  let capatacesGlobal = []; // ← Solo los CAPATACES (filtrados una vez)
 
   // Mostrar / ocultar modal
   function showModal() {
@@ -38,22 +39,22 @@ const BASE = window.location.hostname === "localhost"
     formUsuario.reset();
   }
 
-  // Renderizar usuarios en la tabla
-  function renderizarUsuarios(usuarios) {
+  // Renderizar SOLO capataces
+  function renderizarUsuarios(capataces) {
     tablaUsuarios.innerHTML = "";
     
-    if (usuarios.length === 0) {
+    if (capataces.length === 0) {
       tablaUsuarios.innerHTML = `
         <tr>
           <td colspan="7" class="no-resultados">
-            No se encontraron usuarios con ese criterio de búsqueda
+            No hay capataces registrados aún
           </td>
         </tr>
       `;
       return;
     }
 
-    usuarios.forEach(u => {
+    capataces.forEach(u => {
       const finca = u.finca || {};
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -64,45 +65,49 @@ const BASE = window.location.hostname === "localhost"
         <td>${finca.ubicacion ?? "-"}</td>
         <td>${finca.estado ?? "-"}</td>
         <td>
-          <button class="btn-editar" data-id="${u.id}">✏️</button>
-          <button class="btn-eliminar" data-id="${u.id}">🗑</button>
+          <button class="btn-editar" data-id="${u.id}">Editar</button>
+          <button class="btn-eliminar" data-id="${u.id}">Eliminar</button>
         </td>
       `;
       tablaUsuarios.appendChild(tr);
     });
   }
 
-  // Cargar y pintar usuarios
+  // Cargar usuarios del backend y filtrar solo CAPATACES
   async function cargarUsuarios() {
     try {
       const res = await fetch(BASE);
       if (!res.ok) throw new Error("Status: " + res.status);
-      const usuarios = await res.json();
 
-      usuariosGlobal = usuarios; // Guardar en variable global
+      const todosLosUsuarios = await res.json();
 
-      totalUsuarios && (totalUsuarios.textContent = usuarios.length);
-      totalCapataces && (totalCapataces.textContent = usuarios.filter(u => u.rol === "CAPATAZ").length);
+      // FILTRAR: guardamos todos y solo capataces
+      usuariosGlobal = todosLosUsuarios;
+      capatacesGlobal = todosLosUsuarios.filter(u => u.rol === "CAPATAZ");
 
-      renderizarUsuarios(usuarios);
-      actualizarContadorResultados(usuarios.length, usuarios.length);
+      // Actualizamos contadores
+      if (totalUsuarios) totalUsuarios.textContent = usuariosGlobal.length; // total general (opcional)
+      if (totalCapataces) totalCapataces.textContent = capatacesGlobal.length;
+
+      renderizarUsuarios(capatacesGlobal);
+      actualizarContadorResultados(capatacesGlobal.length, capatacesGlobal.length);
     } catch (err) {
       console.error("cargarUsuarios error:", err);
-      alert("No se pudieron cargar los usuarios.");
+      tablaUsuarios.innerHTML = `<tr><td colspan="7" style="color:red;">Error al conectar con el servidor</td></tr>`;
     }
   }
 
-  // ===== FUNCIONALIDAD DE BÚSQUEDA =====
+  // Búsqueda solo entre capataces
   function filtrarUsuarios(terminoBusqueda) {
     const termino = terminoBusqueda.toLowerCase().trim();
     
     if (termino === "") {
-      renderizarUsuarios(usuariosGlobal);
-      actualizarContadorResultados(usuariosGlobal.length, usuariosGlobal.length);
+      renderizarUsuarios(capatacesGlobal);
+      actualizarContadorResultados(capatacesGlobal.length, capatacesGlobal.length);
       return;
     }
 
-    const usuariosFiltrados = usuariosGlobal.filter(usuario => {
+    const encontrados = capatacesGlobal.filter(usuario => {
       const nombre = (usuario.nombre || "").toLowerCase();
       const email = (usuario.email || "").toLowerCase();
       const fincaNombre = (usuario.finca?.nombre || "").toLowerCase();
@@ -114,35 +119,33 @@ const BASE = window.location.hostname === "localhost"
              fincaUbicacion.includes(termino);
     });
 
-    renderizarUsuarios(usuariosFiltrados);
-    actualizarContadorResultados(usuariosFiltrados.length, usuariosGlobal.length);
+    renderizarUsuarios(encontrados);
+    actualizarContadorResultados(encontrados.length, capatacesGlobal.length);
   }
 
   function actualizarContadorResultados(encontrados, total) {
     if (buscadorUsuarios.value.trim() === "") {
       resultadosBusqueda.textContent = "";
     } else {
-      resultadosBusqueda.textContent = `${encontrados} de ${total} usuarios`;
+      resultadosBusqueda.textContent = `${encontrados} de ${total} capataces`;
     }
   }
 
-  // Event listener para el buscador
+  // Eventos
   buscadorUsuarios && buscadorUsuarios.addEventListener("input", (e) => {
     filtrarUsuarios(e.target.value);
   });
 
-  // Nuevo usuario (botón)
   btnNuevoUsuario && btnNuevoUsuario.addEventListener("click", () => {
     editingId = null;
     formUsuario.reset();
     showModal();
   });
 
-  // Cerrar modal
   cerrarModal && cerrarModal.addEventListener("click", hideModal);
   window.addEventListener("click", (e) => { if (e.target === modalUsuario) hideModal(); });
 
-  // Un único handler de submit para crear/editar
+  // Crear / Editar (siempre con rol CAPATAZ)
   formUsuario && formUsuario.addEventListener("submit", async (ev) => {
     ev.preventDefault();
 
@@ -158,13 +161,12 @@ const BASE = window.location.hostname === "localhost"
       return;
     }
 
-    // payload (enviamos ambas claves de contraseña por compatibilidad)
     const payload = {
       nombre,
       email,
       contraseña,
       contrasena: contraseña,
-      rol: "CAPATAZ",
+      rol: "CAPATAZ", // ← Forzamos siempre CAPATAZ
       finca: {
         nombre: fincaNombre,
         ubicacion: fincaUbicacion,
@@ -175,14 +177,12 @@ const BASE = window.location.hostname === "localhost"
     try {
       let res;
       if (editingId) {
-        // editar
         res = await fetch(`${BASE}/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
       } else {
-        // crear
         res = await fetch(BASE, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -191,79 +191,52 @@ const BASE = window.location.hostname === "localhost"
       }
 
       if (res.ok) {
-        alert(editingId ? "✅ Usuario actualizado" : "✅ Usuario creado");
+        alert(editingId ? "Capataz actualizado" : "Capataz creado");
         hideModal();
         await cargarUsuarios();
-        buscadorUsuarios.value = ""; // Limpiar búsqueda
+        buscadorUsuarios.value = "";
       } else {
         const txt = await res.text();
-        console.error("server error:", res.status, txt);
-        alert("Error del servidor: " + (txt || res.status));
+        alert("Error: " + (txt || res.status));
       }
     } catch (err) {
-      console.error("fetch error:", err);
-      alert("No se pudo conectar al servidor. Revisa que Spring Boot esté corriendo y CORS permita tu origen.");
+      alert("Error de conexión con el servidor");
     }
   });
 
-  // Delegación: editar / eliminar desde la tabla
+  // Eliminar y Editar (igual que antes)
   document.addEventListener("click", async (e) => {
-    // Eliminar
     if (e.target.classList.contains("btn-eliminar")) {
       const id = e.target.dataset.id;
-      if (!id) return;
-      const ok = confirm("⚠️ ¿Seguro que deseas eliminar este usuario?");
-      if (!ok) return;
-      try {
-        const res = await fetch(`${BASE}/${id}`, { method: "DELETE" });
-        if (res.ok) {
-          alert("✅ Usuario eliminado");
-          await cargarUsuarios();
-          buscadorUsuarios.value = ""; // Limpiar búsqueda
-        } else {
-          const txt = await res.text();
-          alert("Error eliminando: " + (txt || res.status));
-        }
-      } catch (err) {
-        console.error(err);
-        alert("No se pudo conectar al servidor.");
-      }
+      if (!id || !confirm("¿Eliminar este capataz?")) return;
+      await fetch(`${BASE}/${id}`, { method: "DELETE" });
+      await cargarUsuarios();
+      buscadorUsuarios.value = "";
     }
 
-    // Editar
     if (e.target.classList.contains("btn-editar")) {
       const id = e.target.dataset.id;
-      if (!id) return;
-      try {
-        const res = await fetch(`${BASE}/${id}`);
-        if (!res.ok) throw new Error("No se pudo obtener el usuario: " + res.status);
-        const usuario = await res.json();
+      const usuario = usuariosGlobal.find(u => u.id == id);
+      if (!usuario) return;
 
-        // Rellenar modal
-        editingId = id;
-        inpNombre.value = usuario.nombre || "";
-        inpEmail.value = usuario.email || "";
-        inpContrasena.value = usuario.contraseña || usuario.contrasena || "";
-        inpFincaNombre.value = usuario.finca?.nombre || "";
-        inpFincaUbicacion.value = usuario.finca?.ubicacion || "";
-        selFincaEstado.value = usuario.finca?.estado || "ACTIVA";
-
-        showModal();
-      } catch (err) {
-        console.error("editar error:", err);
-        alert("No se pudo cargar los datos para edición.");
-      }
+      editingId = id;
+      inpNombre.value = usuario.nombre || "";
+      inpEmail.value = usuario.email || "";
+      inpContrasena.value = ""; // no mostramos contraseña
+      inpFincaNombre.value = usuario.finca?.nombre || "";
+      inpFincaUbicacion.value = usuario.finca?.ubicacion || "";
+      selFincaEstado.value = usuario.finca?.estado || "ACTIVA";
+      showModal();
     }
   });
 
-  // Primera carga
+  // Carga inicial
   cargarUsuarios();
 });
 
 function cerrarSesion() {
   if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-    localStorage.removeItem('usuario');
-    localStorage.clear(); // Limpiar todo el localStorage
+    localStorage.clear();
     window.location.href = '../login/login.html';
   }
 }
